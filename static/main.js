@@ -35,7 +35,6 @@ function updateChartColors(chartId, selectedPoints) {
 }
 
 function resetAllCharts() {
-    currentSelections = {}; // Clear all selections
     // Reset yearly chart
     Plotly.update('yearly-chart', {
         'marker.color': [Array(currentData.yearly_avg.length).fill(
@@ -141,14 +140,18 @@ $(document).ready(function() {
     });
 
     // Update the existing checkbox change handlers
-    $('input[id$="-all"]').on('change', function() {
+    $('input[id$="-all"]').on('change', function(e) {
+        if (e.ctrlKey || e.shiftKey) return; // Don't handle if modifier keys are pressed
+        
         const type = this.id.replace('-all', '');
         $(`input[name="${type}"]`).prop('checked', $(this).is(':checked'));
         updateDropdownLabel(type);
         fetchData();
     });
 
-    $(document).on('change', 'input[type="checkbox"]:not([id$="-all"])', function() {
+    $(document).on('change', 'input[type="checkbox"]:not([id$="-all"])', function(e) {
+        if (e.ctrlKey || e.shiftKey) return; // Don't handle if modifier keys are pressed
+        
         const type = $(this).attr('name');
         const allChecked = $(`input[name="${type}"]:checked`).length === $(`input[name="${type}"]`).length;
         $(`#${type}-all`).prop('checked', allChecked);
@@ -219,6 +222,9 @@ function fetchData() {
         scores: getSelectedValues('score')
     };
     
+    // Debug logging
+    console.log('Sending filters:', filters);
+    
     // Handle "Select all" cases
     if ($("#year-all").prop('checked')) filters.years = [];
     if ($("#position-all").prop('checked')) filters.positions = [];
@@ -247,34 +253,10 @@ function fetchData() {
                 return;
             }
             
-            currentData = data;
-            
-            // Preserve current selections when updating charts
-            const currentYearSelection = currentSelections['yearly-chart'] || [];
-            const currentGroupSelection = currentSelections['group-chart'] || [];
-            
-            // Create charts with filtered data
+            updateStats(data);
             createYearlyChart(data);
             createGroupChart(data);
             createPassFailChart(data);
-            updateStats(data);
-            
-            // Reapply selections if they still exist in filtered data
-            if (currentYearSelection.length > 0) {
-                const validYears = currentYearSelection.filter(year => 
-                    Object.keys(data.yearly_avg).includes(year));
-                if (validYears.length > 0) {
-                    updateChartColors('yearly-chart', validYears);
-                }
-            }
-            
-            if (currentGroupSelection.length > 0) {
-                const validGroups = currentGroupSelection.filter(group => 
-                    Object.keys(data.group_avg).includes(group));
-                if (validGroups.length > 0) {
-                    updateChartColors('group-chart', validGroups);
-                }
-            }
         },
         error: function(err) {
             console.error('Error fetching data:', err);
@@ -295,20 +277,6 @@ function updateStats(data) {
     $('#total-candidates .stat-value').text(data.total_candidates);
     $('#pass-rate .stat-value').text(data.pass_rate + '%');
 }
-
-// Add this function to track currently selected points
-function addToSelection(chartId, newPoint) {
-    if (!currentSelections[chartId]) {
-        currentSelections[chartId] = [];
-    }
-    if (!currentSelections[chartId].includes(newPoint)) {
-        currentSelections[chartId].push(newPoint);
-    }
-    return currentSelections[chartId];
-}
-
-// Add this at the top of the file with other global variables
-let currentSelections = {};
 
 function createYearlyChart(data) {
     const trace1 = {
@@ -340,37 +308,25 @@ function createYearlyChart(data) {
 
     Plotly.newPlot('yearly-chart', [trace1], layout, config);
 
-    // Update click handler
+    // Add click handler
     document.getElementById('yearly-chart').on('plotly_click', function(eventData) {
         if (!eventData || !eventData.points) return;
 
         const clickedYear = eventData.points[0].x;
-        let selectedYears;
-        
-        if (eventData.event.ctrlKey) {
-            // Add to current selection if Ctrl is pressed
-            selectedYears = addToSelection('yearly-chart', clickedYear);
-        } else {
-            // New single selection if Ctrl is not pressed
-            selectedYears = [clickedYear];
-            currentSelections['yearly-chart'] = selectedYears;
-        }
         
         // Update colors for this chart
-        updateChartColors('yearly-chart', selectedYears);
+        updateChartColors('yearly-chart', [clickedYear]);
         
         // Cross filter other charts
-        const filters = { years: selectedYears };
+        const filters = { years: [clickedYear] };
         crossFilterCharts(filters);
         
         // Update sidebar filters
         $('input[name="year"]').prop('checked', false);
-        selectedYears.forEach(year => {
-            $(`input[name="year"][value="${year}"]`).prop('checked', true);
-        });
+        $(`input[name="year"][value="${clickedYear}"]`).prop('checked', true);
     });
 
-    // Update selection handler for drag
+    // Add selection handler for drag
     document.getElementById('yearly-chart').on('plotly_selected', function(eventData) {
         if (!eventData || !eventData.points) {
             // Reset all charts to original state
@@ -378,8 +334,8 @@ function createYearlyChart(data) {
             return;
         }
 
+        // Get selected years
         const selectedYears = [...new Set(eventData.points.map(pt => pt.x))];
-        currentSelections['yearly-chart'] = selectedYears; // Update current selection
         
         // Update colors for this chart
         updateChartColors('yearly-chart', selectedYears);
@@ -395,11 +351,8 @@ function createYearlyChart(data) {
         });
     });
 
-    // Update double-click handler
-    document.getElementById('yearly-chart').on('plotly_doubleclick', function() {
-        currentSelections = {}; // Clear selections
-        resetAllCharts();
-    });
+    // Add double-click to reset
+    document.getElementById('yearly-chart').on('plotly_doubleclick', resetAllCharts);
 }
 
 function createGroupChart(data) {
@@ -453,37 +406,25 @@ function createGroupChart(data) {
 
     Plotly.newPlot('group-chart', [trace], layout, config);
 
-    // Update click handler
+    // Add click handler
     document.getElementById('group-chart').on('plotly_click', function(eventData) {
         if (!eventData || !eventData.points) return;
 
         const clickedGroup = eventData.points[0].y;
-        let selectedGroups;
-        
-        if (eventData.event.ctrlKey) {
-            // Add to current selection if Ctrl is pressed
-            selectedGroups = addToSelection('group-chart', clickedGroup);
-        } else {
-            // New single selection if Ctrl is not pressed
-            selectedGroups = [clickedGroup];
-            currentSelections['group-chart'] = selectedGroups;
-        }
         
         // Update colors for this chart
-        updateChartColors('group-chart', selectedGroups);
+        updateChartColors('group-chart', [clickedGroup]);
         
         // Cross filter other charts
-        const filters = { testPositions: selectedGroups };
+        const filters = { testPositions: [clickedGroup] };
         crossFilterCharts(filters);
         
         // Update sidebar filters
         $('input[name="test-position"]').prop('checked', false);
-        selectedGroups.forEach(group => {
-            $(`input[name="test-position"][value="${group}"]`).prop('checked', true);
-        });
+        $(`input[name="test-position"][value="${clickedGroup}"]`).prop('checked', true);
     });
 
-    // Update selection handler for drag
+    // Add selection handler for drag
     document.getElementById('group-chart').on('plotly_selected', function(eventData) {
         if (!eventData || !eventData.points) {
             resetAllCharts();
@@ -491,7 +432,6 @@ function createGroupChart(data) {
         }
 
         const selectedGroups = [...new Set(eventData.points.map(pt => pt.y))];
-        currentSelections['group-chart'] = selectedGroups; // Update current selection
         
         // Update colors for this chart
         updateChartColors('group-chart', selectedGroups);
@@ -507,11 +447,8 @@ function createGroupChart(data) {
         });
     });
 
-    // Update double-click handler
-    document.getElementById('group-chart').on('plotly_doubleclick', function() {
-        currentSelections = {}; // Clear selections
-        resetAllCharts();
-    });
+    // Add double-click to reset
+    document.getElementById('group-chart').on('plotly_doubleclick', resetAllCharts);
 }
 
 function createPassFailChart(data) {
@@ -702,6 +639,9 @@ function fetchData() {
         scores: getSelectedValues('score')
     };
     
+    // Debug logging
+    console.log('Sending filters:', filters);
+    
     // Handle "Select all" cases
     if ($("#year-all").prop('checked')) filters.years = [];
     if ($("#position-all").prop('checked')) filters.positions = [];
@@ -732,21 +672,9 @@ function fetchData() {
 
 // Add new function for cross-filtering
 function crossFilterCharts(filters) {
-    // Merge with existing sidebar filters
-    const currentFilters = {
-        years: getSelectedValues('year'),
-        positions: getSelectedValues('position'),
-        testPositions: getSelectedValues('test-position'),
-        employeeIds: getSelectedValues('employee-id'),
-        birthplaces: getSelectedValues('birthplace'),
-        results: getSelectedValues('result'),
-        scores: getSelectedValues('score'),
-        ...filters  // Override with new filters
-    };
-
-    // Update checkboxes based on new filters
+    // Update checkboxes based on filters
     Object.entries(filters).forEach(([key, values]) => {
-        const filterName = key.toLowerCase().replace('testpositions', 'test-position');
+        const filterName = key.toLowerCase();
         $(`input[name="${filterName}"]`).prop('checked', false);
         values.forEach(value => {
             $(`input[name="${filterName}"][value="${value}"]`).prop('checked', true);
@@ -758,28 +686,25 @@ function crossFilterCharts(filters) {
     $.ajax({
         url: '/get_data',
         method: 'GET',
-        data: { filters: JSON.stringify(currentFilters) },
+        data: { filters: JSON.stringify(filters) },
         success: function(data) {
             if (!data) {
                 console.error('No data received');
                 return;
             }
             
+            // Store the filtered data
             currentData = data;
+            
+            // Update stats
             updateStats(data);
             
-            // Update charts while preserving selections
+            // Update other charts with filtered data
             if (!filters.years) {
                 createYearlyChart(data);
-                if (currentSelections['yearly-chart']) {
-                    updateChartColors('yearly-chart', currentSelections['yearly-chart']);
-                }
             }
             if (!filters.testPositions) {
                 createGroupChart(data);
-                if (currentSelections['group-chart']) {
-                    updateChartColors('group-chart', currentSelections['group-chart']);
-                }
             }
             if (!filters.results) {
                 createPassFailChart(data);

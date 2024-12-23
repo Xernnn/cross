@@ -1,3 +1,16 @@
+:root {
+    /* Chart Colors */
+    --chart-blue: rgb(26, 115, 232);
+    --chart-blue-light: rgba(26, 115, 232, 0.3);
+    --chart-blue-bold: rgb(13, 71, 161);  /* Darker blue for focus */
+    --chart-green: rgb(52, 168, 83);
+    --chart-green-light: rgba(52, 168, 83, 0.3);
+    --chart-green-bold: rgb(27, 94, 32);  /* Darker green for focus */
+    --chart-red: rgb(234, 67, 53);
+    --chart-red-light: rgba(234, 67, 53, 0.3);
+    --chart-red-bold: rgb(183, 28, 28);   /* Darker red for focus */
+}
+
 body {
     margin: 0;
     padding: 0;
@@ -263,5 +276,123 @@ body {
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     flex: 1;
+}
+
+/* Add new styles for enhanced interactivity */
+.chart-container {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.zoom-controls {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+}
+
+.zoom-controls button {
+    margin: 0 2px;
+    padding: 5px 10px;
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.export-options {
+    margin-top: 10px;
+    text-align: right;
+}
+
+.export-options button {
+    margin-left: 10px;
+    padding: 8px 15px;
+    background: #1a73e8;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.tooltip {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+/* Animation for chart updates */
+.chart-update {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0.5; }
+    to { opacity: 1; }
+}
+
+/* Responsive design improvements */
+@media (max-width: 768px) {
+    .chart-container {
+        width: 100%;
+        overflow-x: auto;
+    }
+    
+    .zoom-controls {
+        position: static;
+        margin-bottom: 10px;
+    }
+    
+    .export-options {
+        text-align: center;
+    }
+}
+
+.navigation-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.nav-button {
+    background-color: #1a73e8;
+    color: white;
+    padding: 30px;
+    border-radius: 8px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100px;
+}
+
+.nav-button:hover {
+    background-color: #1557b0;
+}
+
+.logo {
+    height: 60px;
+    margin-right: 20px;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: #1a73e8;
+    color: white;
 }
 
