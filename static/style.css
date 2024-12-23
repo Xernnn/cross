@@ -1,0 +1,267 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f0f2f5;
+}
+
+.header {
+    background-color: #1a73e8;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.header h2 {
+    margin: 10px 0 0;
+    font-size: 18px;
+    font-weight: normal;
+}
+
+.container {
+    display: flex;
+    min-height: calc(100vh - 100px);
+    padding: 20px;
+}
+
+.sidebar {
+    width: 280px;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-right: 20px;
+    height: fit-content;
+}
+
+.sidebar h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 18px;
+    color: #1a73e8;
+}
+
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.filter-group {
+    margin-bottom: 20px;
+}
+
+.filter-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #555;
+    font-weight: 500;
+}
+
+.filter-group select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: white;
+}
+
+.stats-container {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.stat-box {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    flex: 1;
+}
+
+.stat-box h4 {
+    margin: 0;
+    color: #555;
+    font-size: 14px;
+}
+
+.stat-box .stat-value {
+    margin: 10px 0 0;
+    font-size: 24px;
+    font-weight: bold;
+    color: #1a73e8;
+}
+
+.checkbox-container {
+    padding: 8px;
+}
+
+.checkbox-item {
+    padding: 4px 8px;
+}
+
+.checkbox-item:hover {
+    background-color: #f8f9fa;
+}
+
+.checkbox-item input[type="checkbox"] {
+    margin-right: 8px;
+}
+
+.checkbox-item label {
+    margin: 0;
+    font-weight: normal;
+}
+
+/* Add custom scrollbar styles */
+.checkbox-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.checkbox-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.checkbox-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.checkbox-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Add these styles */
+.chart-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    height: 100%;
+}
+
+.chart-box {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    height: 100%;
+}
+
+.chart-box.wide {
+    grid-column: 1 / -1;
+}
+
+/* Add these styles for the dropdown filters */
+.filter-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.filter-dropdown {
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.dropdown-btn {
+    width: 100%;
+    text-align: left;
+    padding: 8px 12px;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.dropdown-btn .btn-text {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-right: 8px;
+}
+
+.dropdown-content {
+    display: none;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-top: -3px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.dropdown-content.show {
+    display: block;
+}
+
+.arrow {
+    transition: transform 0.3s;
+}
+
+.dropdown-btn.active .arrow {
+    transform: rotate(180deg);
+}
+
+/* Add styles for filter headings */
+.filter-heading {
+    color: #666;
+    font-size: 14px;
+    margin: 20px 0 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #eee;
+}
+
+/* First filter heading needs less top margin */
+.filter-heading:first-of-type {
+    margin-top: 10px;
+}
+
+/* Left column for yearly chart and pie chart */
+.chart-column-left {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Right column for group chart */
+.chart-column-right {
+    grid-row: 1 / span 2; /* Make it span both rows */
+    grid-column: 2;
+}
+
+/* Adjust main content layout */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Stats container styles */
+.stats-container {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.stat-box {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    flex: 1;
+}
+

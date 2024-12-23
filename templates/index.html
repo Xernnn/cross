@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>QUẢN LÝ SÁT HẠCH TIẾNG ANH</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="header">
+        <h1>QUẢN LÝ SÁT HẠCH TIẾNG ANH</h1>
+        <h2>KẾT QUẢ THEO NĂM VÀ NHÓM THI SÁT HẠCH</h2>
+    </div>
+    
+    <div class="container">
+        <div class="sidebar">
+            <h3>Bộ lọc</h3>
+            
+            <h4 class="filter-heading">Năm đánh giá</h4>
+            <div class="filter-dropdown">
+                <button class="dropdown-btn" data-type="year" data-default-text="Năm đánh giá">
+                    <span class="btn-text">All</span>
+                    <span class="arrow">▼</span>
+                </button>
+                <div class="dropdown-content">
+                    <div class="checkbox-container">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="year-all" value="all" checked>
+                            <label for="year-all">Select all</label>
+                        </div>
+                        {% for year in years %}
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="year" value="{{ year }}" checked>
+                            <label for="year-{{ loop.index }}">{{ year }}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <h4 class="filter-heading">Vị trí công tác</h4>
+            <div class="filter-dropdown">
+                <button class="dropdown-btn" data-type="position" data-default-text="Vị trí công tác">
+                    <span class="btn-text">All</span>
+                    <span class="arrow">▼</span>
+                </button>
+                <div class="dropdown-content">
+                    <div class="checkbox-container">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="position-all" value="all" checked>
+                            <label for="position-all">Select all</label>
+                        </div>
+                        {% for position in positions %}
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="position" value="{{ position }}" checked>
+                            <label for="position-{{ loop.index }}">{{ position }}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <h4 class="filter-heading">Vị trí sát hạch</h4>
+            <div class="filter-dropdown">
+                <button class="dropdown-btn" data-type="test-position" data-default-text="Vị trí sát hạch">
+                    <span class="btn-text">All</span>
+                    <span class="arrow">▼</span>
+                </button>
+                <div class="dropdown-content">
+                    <div class="checkbox-container">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="test-position-all" value="all" checked>
+                            <label for="test-position-all">Select all</label>
+                        </div>
+                        {% for pos in test_positions %}
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="test-position" value="{{ pos }}" checked>
+                            <label for="test-position-{{ loop.index }}">{{ pos }}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <h4 class="filter-heading">Mã nhân viên</h4>
+            <div class="filter-dropdown">
+                <button class="dropdown-btn" data-type="employee-id" data-default-text="Mã nhân viên">
+                    <span class="btn-text">All</span>
+                    <span class="arrow">▼</span>
+                </button>
+                <div class="dropdown-content">
+                    <div class="checkbox-container">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="employee-id-all" value="all" checked>
+                            <label for="employee-id-all">Select all</label>
+                        </div>
+                        {% for id in employee_ids %}
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="employee-id" value="{{ id }}" checked>
+                            <label for="employee-id-{{ loop.index }}">{{ id }}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <h4 class="filter-heading">Nơi sinh</h4>
+            <div class="filter-dropdown">
+                <button class="dropdown-btn" data-type="birthplace" data-default-text="Nơi sinh">
+                    <span class="btn-text">All</span>
+                    <span class="arrow">▼</span>
+                </button>
+                <div class="dropdown-content">
+                    <div class="checkbox-container">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="birthplace-all" value="all" checked>
+                            <label for="birthplace-all">Select all</label>
+                        </div>
+                        {% for place in birthplaces %}
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="birthplace" value="{{ place }}" checked>
+                            <label for="birthplace-{{ loop.index }}">{{ place }}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <h4 class="filter-heading">Kết quả</h4>
+            <div class="filter-dropdown">
+                <button class="dropdown-btn" data-type="result" data-default-text="Kết quả">
+                    <span class="btn-text">All</span>
+                    <span class="arrow">▼</span>
+                </button>
+                <div class="dropdown-content">
+                    <div class="checkbox-container">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="result-all" value="all" checked>
+                            <label for="result-all">Select all</label>
+                        </div>
+                        {% for result in results %}
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="result" value="{{ result }}" checked>
+                            <label for="result-{{ loop.index }}">{{ result }}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <h4 class="filter-heading">Điểm</h4>
+            <div class="filter-dropdown">
+                <button class="dropdown-btn" data-type="score" data-default-text="Điểm">
+                    <span class="btn-text">All</span>
+                    <span class="arrow">▼</span>
+                </button>
+                <div class="dropdown-content">
+                    <div class="checkbox-container">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="score-all" value="all" checked>
+                            <label for="score-all">Select all</label>
+                        </div>
+                        {% for score in scores %}
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="score" value="{{ score }}" checked>
+                            <label for="score-{{ loop.index }}">{{ score }}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="stats-container">
+                <div class="stat-box" id="total-candidates">
+                    <h4>Tổng số thí sinh</h4>
+                    <p class="stat-value">-</p>
+                </div>
+                <div class="stat-box" id="pass-rate">
+                    <h4>Tỷ lệ đạt</h4>
+                    <p class="stat-value">-</p>
+                </div>
+            </div>
+            
+            <div class="chart-grid">
+                <div class="chart-column-left">
+                    <div class="chart-box">
+                        <div id="yearly-chart"></div>
+                    </div>
+                    <div class="chart-box">
+                        <div id="pass-fail-chart"></div>
+                    </div>
+                </div>
+                <div class="chart-column-right">
+                    <div class="chart-box">
+                        <div id="group-chart"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+</body>
+</html>
